@@ -18,7 +18,7 @@ stages:
   jobs:
   - template: azure-pipelines-extension-build.yml
     parameters:
-      publisher: jlorich
+      publisher: cmatteson
       tasks:
         - TerraformInstaller
         - Terraform
@@ -28,4 +28,4 @@ stages:
   jobs:
   - template: azure-pipelines-extension-release.yml
     parameters:
-      serviceUrl: https://dev.azure.com/jlorich
+      serviceUrl: https://dev.azure.com/cmatteson

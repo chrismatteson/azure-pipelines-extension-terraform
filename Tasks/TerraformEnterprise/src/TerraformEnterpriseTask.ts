@@ -21,7 +21,7 @@ export class TerraformEnterpriseTask {
         switch(this.options.command) {
             case "workspace":
                 console.log('workspace');
-                var url = this.options.url + "organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                var url = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
                 console.log(url);
                 await this.terraformapi.call(url);
                 break;

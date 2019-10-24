@@ -13,7 +13,7 @@ export class TaskOptions {
     readonly organization : string | undefined;
     readonly workspace : string | undefined;
     readonly token : string | undefined;
-    readonly skipcertvalidation : string | undefined;
+    readonly skipcertcheck : string | undefined;
 
 
     /**
@@ -26,6 +26,6 @@ export class TaskOptions {
         this.organization = task.getInput("organization");
         this.workspace = task.getInput("workspace");
         this.token = task.getInput("token");
-        this.skipcertvalidation = task.getInput("skipcertvalidation");
+        this.skipcertcheck = task.getInput("skipcertcheck");
     }
 }

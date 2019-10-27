@@ -60,7 +60,7 @@ export class TerraformApi {
         }
 
         try {
-          await axios({
+          let response = await axios({
             method: 'get',
             baseURL: baseUrl,
             url: requestUrl,
@@ -68,10 +68,9 @@ export class TerraformApi {
               'Authorization': 'Bearer ' + accessToken,
               'Content-Type': 'application/vnd.api+json'
             }
-          }).then((response: ServerResponse) => {
-            console.log(response.data.data.id);
-            return response.data.data.id;
           });
+          console.log(response.data.data.id);
+          return response.data.data.id;
         }
         catch (error) {
             console.log("Unable to update Terraform Api, Error: " + error);

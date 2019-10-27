@@ -61,15 +61,18 @@ export class TerraformEnterpriseTask {
                 var relationshipsconfigversiondata:any = {};
                 var relationshipsconfigversion:any = {};
                 var relationships:any = {};
+                var payloaddata:any = {};
                 var payload:any = {};
                 console.log("Calling workspace lookup");
                 var workspaceId = await this.terraformapi.idLookup(workspacelookupurl)
                 console.log(workspaceId);
                 console.log('build relationships');
+                relationshipsworkspacedata["type"] = "workspaces";
                 relationshipsworkspacedata["id"] = workspaceId;
                 relationshipsworkspace["data"] = relationshipsworkspacedata;
                 relationships["workspace"] = relationshipsworkspace;
                 if ( runconfigversion ) {
+                    relationshipsconfigversiondata["type"] = "configuration-versions";
                     relationshipsconfigversiondata["id"] = runconfigversion;
                     relationshipsconfigversion["data"] = relationshipsconfigversiondata;
                     relationships["configuration-version"] = relationshipsconfigversion;
@@ -82,8 +85,10 @@ export class TerraformEnterpriseTask {
                     attributes["message"] = runmessage
                 }
                 console.log(attributes);
-                payload["attributes"] = attributes;
-                payload["relationships"] = relationships;
+                payloaddata["attributes"] = attributes;
+                payloaddata["relationships"] = relationships;
+                payloaddata["type"] = "runs";
+                payload["data"] = payloaddata;
                 console.log(payload);
                 await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;

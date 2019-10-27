@@ -26,19 +26,16 @@ export class TerraformEnterpriseTask {
                         var method = 'post';
                         var endpoint = '/workspaces';
                         var payload = this.workspacePayload();
-//                        var payload = '{"data":{"attributes":{"name":"' + this.options.workspace + '"},"type":"workspaces"}}';
                         break;
                     case "update":
                         var method = 'patch';
                         var endpoint = '/workspaces/' + this.options.workspace;
                         var payload = this.workspacePayload();
-//                        var payload = JSON.stringify('{"data":{"attributes":{"name":' + this.options.workspace + '},"type":"workspaces"}}');
                         break;
                     case "delete":
                         var method = 'delete';
                         var endpoint = '/workspaces/' + this.options.workspace;
                         var payload = this.workspacePayload();
-//                        var payload = '{}';
                         break;
                     default:
                         throw new Error("Invalid workspace command");
@@ -51,9 +48,44 @@ export class TerraformEnterpriseTask {
                 await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
             case "queuePlan":
-                var endpoint = '/runs';
                 console.log('queuePlan');
-                await this.terraformapi.call("url", "get");
+                const runconfigversion = this.options.runconfigversion;
+                const runisdestroy = this.options.runisdestroy;
+                const runmessage = this.options.runmessage;
+                var url = '/runs';
+                var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                var method = 'post';
+                var attributes:any = {};
+                var relationshipsworkspacedata:any = {};
+                var relationshipsworkspace:any = {};
+                var relationshipsconfigversiondata:any = {};
+                var relationshipsconfigversion:any = {};
+                var relationships:any = {};
+                var payload:any = {};
+                console.log("Calling workspace lookup");
+                var workspaceId = await this.terraformapi.idLookup(workspacelookupurl)
+                console.log(workspaceId);
+                console.log('build relationships');
+                relationshipsworkspacedata["id"] = workspaceId;
+                relationshipsworkspace["data"] = relationshipsworkspacedata;
+                relationships["workspace"] = relationshipsworkspace;
+                if ( runconfigversion ) {
+                    relationshipsconfigversiondata["id"] = runconfigversion;
+                    relationshipsconfigversion["data"] = relationshipsconfigversiondata;
+                    relationships["configuration-version"] = relationshipsconfigversion;
+                }
+                console.log(relationships);
+                if ( runisdestroy === true ) {
+                    attributes["is-destroy"] = runisdestroy
+                }
+                if ( runmessage ) {
+                    attributes["message"] = runmessage
+                }
+                console.log(attributes);
+                payload["attributes"] = attributes;
+                payload["relationships"] = relationships;
+                console.log(payload);
+                await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
             case "confirmApply":
                 console.log('confirmApply');
@@ -68,15 +100,6 @@ export class TerraformEnterpriseTask {
             default:
                 throw new Error("Invalid command");
         }
-    }
-
-    private buildPayload(prefix: string, ...args: any[]) {
-        console.log('builder');
-        const arrayPrefix = prefix;
-        let attributes = [...args]
-        var payloadString = arrayPrefix + ": " + {...args};
-        var payload = { [arrayPrefix]: {...args} };
-        return payload;
     }
 
     private workspacePayload() {
@@ -103,16 +126,58 @@ export class TerraformEnterpriseTask {
         args["name"] = workspace;
         args["source-name"] = sourcename;
         args["source-url"] = sourceurl;        
-        if ( autoapply != undefined) {
-             args["auto-apply"] = autoapply
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( autoapply === true ) {
+            args["auto-apply"] = autoapply
+        }
+        if ( description ) {
+            args["description"] = description
+        }
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( filetriggersenabled === false ) {
+            args["file-triggers-enabled"] = filetriggersenabled
+        }
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( queueallruns === true ) {
+            args["queue-all-runs"] = queueallruns
+        }
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( speculativeenabled === false ) {
+            args["speculative-enabled"] = speculativeenabled
+        }
+        if ( terraformversion ) {
+            args["terraform-version"] = terraformversion
+        }
+        // this.getDelimintedInput seems to return an empty array for undefined, so we are checking for an array with data inside.
+        if ( triggerprefixes != undefined && triggerprefixes.length > 0 ) {
+            args["trigger-prefixes"] = triggerprefixes
+        }
+        if ( workingdirectory ) {
+            args["working-directory"] = workingdirectory
+        }
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( vcsrepo === true ) {
+            var vcsrepoPayload:any = {}
+            if ( vcsrepotokenid ) {
+                vcsrepoPayload["oauth-token-id"] = vcsrepotokenid
+            }
+            if ( vcsrepobranch ) {
+                vcsrepoPayload["branch"] = vcsrepobranch
+            }
+        // this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+            if ( vcsrepoingresssubmodules === true ) {
+                vcsrepoPayload["ingress-submodules"] = vcsrepoingresssubmodules
+            }
+            if ( vcsrepoidentifier ) {
+                vcsrepoPayload["identifier"] = vcsrepoidentifier
+            }
+            args["vcs-repo"] = vcsrepoPayload;
         }
         console.log(args);
-//        var attributesPayload = this.buildPayload("attributes", ...args);
         var attributesPayload:any = {}
         console.log("created empty variable")
         attributesPayload["attributes"] = args
         console.log(attributesPayload);
-//        var payload = this.buildPayload("data", attributesPayload);
         var payload:any = {}
         payload["data"] = attributesPayload;
         console.log(payload);

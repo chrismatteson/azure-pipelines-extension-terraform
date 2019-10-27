@@ -37,6 +37,7 @@ export class TerraformApi {
           });
         }
         catch (error) {
+            console.log("Unable to update Terraform Api, Error: " + error);
             throw new Error("Unable to update Terraform Api, Error: " + error);
         }
     }
@@ -48,7 +49,6 @@ export class TerraformApi {
         const requestUrl = url;
         console.log(requestUrl);
         const accessToken = this.options.token;
-        console.log(accessToken);
         interface ServerResponse {
           data: ServerDataWrapper
         }
@@ -69,13 +69,12 @@ export class TerraformApi {
               'Content-Type': 'application/vnd.api+json'
             }
           }).then((response: ServerResponse) => {
-            console.log(response);
-            console.log(response.data);
             console.log(response.data.data.id);
             return response.data.data.id;
           });
         }
         catch (error) {
+            console.log("Unable to update Terraform Api, Error: " + error);
             throw new Error("Unable to update Terraform Api, Error: " + error);
         }
     }

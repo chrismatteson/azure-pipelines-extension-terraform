@@ -33,6 +33,11 @@ export class TaskOptions {
     readonly vcsrepoingresssubmodules : boolean | undefined;
     readonly vcsrepoidentifier : string | undefined;
 
+    // Runs
+    readonly runisdestroy : boolean | undefined;
+    readonly runmessage : string | undefined;
+    readonly runconfigversion : string | undefined;
+
     /**
      * Creates and loads a well-formed options object
      */
@@ -57,5 +62,8 @@ export class TaskOptions {
         this.vcsrepooauthtokenid = task.getInput("vcsrepooauthtokenid");
         this.vcsrepoingresssubmodules = task.getBoolInput("vcsrepoingresssubmodules");
         this.vcsrepoidentifier = task.getInput("vcsrepoidentifier");
+        this.runisdestroy = task.getBoolInput("runisdestroy");
+        this.runmessage = task.getInput("runmessage");
+        this.runconfigversion = task.getInput("runconfigversion");
     }
 }

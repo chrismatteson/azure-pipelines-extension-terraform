@@ -22,30 +22,36 @@ export class TerraformEnterpriseTask {
             case "workspace":
                 switch(this.options.workspacecommand) {
                     case "create":
+                        console.log('create');
                         var method = 'post';
                         var endpoint = '/workspaces';
-                        var payload = '{"data":{"attributes":{"name":"' + this.options.workspace + '"},"type":"workspaces"}}';
+                        var payload = this.workspacePayload();
+//                        var payload = '{"data":{"attributes":{"name":"' + this.options.workspace + '"},"type":"workspaces"}}';
                         break;
                     case "update":
                         var method = 'patch';
                         var endpoint = '/workspaces/' + this.options.workspace;
-                        var payload = JSON.stringify('{"data":{"attributes":{"name":' + this.options.workspace + '},"type":"workspaces"}}');
+                        var payload = this.workspacePayload();
+//                        var payload = JSON.stringify('{"data":{"attributes":{"name":' + this.options.workspace + '},"type":"workspaces"}}');
                         break;
                     case "delete":
                         var method = 'delete';
                         var endpoint = '/workspaces/' + this.options.workspace;
-                        var payload = '{}';
+                        var payload = this.workspacePayload();
+//                        var payload = '{}';
                         break;
                     default:
                         throw new Error("Invalid workspace command");
                 }
 
                 console.log('workspace');
+                console.log('payload');
                 var url = "/organizations/" + this.options.organization + endpoint;
                 console.log(url);
-                await this.terraformapi.call(url, method, payload);
+                await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
             case "queuePlan":
+                var endpoint = '/runs';
                 console.log('queuePlan');
                 await this.terraformapi.call("url", "get");
                 break;
@@ -62,6 +68,15 @@ export class TerraformEnterpriseTask {
             default:
                 throw new Error("Invalid command");
         }
+    }
+
+    private buildPayload(prefix: string, ...args: any[]) {
+        console.log('builder');
+        const arrayPrefix = prefix;
+        let attributes = [...args]
+        var payloadString = arrayPrefix + ": " + {...args};
+        var payload = { [arrayPrefix]: {...args} };
+        return payload;
     }
 
     private workspacePayload() {
@@ -82,5 +97,26 @@ export class TerraformEnterpriseTask {
         const vcsrepobranch = this.options.vcsrepobranch;
         const vcsrepoingresssubmodules = this.options.vcsrepoingresssubmodules;
         const vcsrepoidentifier = this.options.vcsrepoidentifier;
+
+        var args:any = {}
+        
+        args["name"] = workspace;
+        args["source-name"] = sourcename;
+        args["source-url"] = sourceurl;        
+        if ( autoapply != undefined) {
+             args["auto-apply"] = autoapply
+        }
+        console.log(args);
+//        var attributesPayload = this.buildPayload("attributes", ...args);
+        var attributesPayload:any = {}
+        console.log("created empty variable")
+        attributesPayload["attributes"] = args
+        console.log(attributesPayload);
+//        var payload = this.buildPayload("data", attributesPayload);
+        var payload:any = {}
+        payload["data"] = attributesPayload;
+        console.log(payload);
+
+        return payload;
     }
 }

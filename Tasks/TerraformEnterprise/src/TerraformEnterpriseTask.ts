@@ -38,7 +38,9 @@ export class TerraformEnterpriseTask {
                         var payload = this.workspacePayload();
                         break;
                     default:
+                        console.log("Invalid workspace command");
                         throw new Error("Invalid workspace command");
+                        break;
                 }
 
                 console.log('workspace');
@@ -47,53 +49,73 @@ export class TerraformEnterpriseTask {
                 console.log(url);
                 await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
-            case "queuePlan":
-                console.log('queuePlan');
-                const runconfigversion = this.options.runconfigversion;
-                const runisdestroy = this.options.runisdestroy;
-                const runmessage = this.options.runmessage;
-                var url = '/runs';
-                var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
-                var method = 'post';
-                var attributes:any = {};
-                var relationshipsworkspacedata:any = {};
-                var relationshipsworkspace:any = {};
-                var relationshipsconfigversiondata:any = {};
-                var relationshipsconfigversion:any = {};
-                var relationships:any = {};
-                var payloaddata:any = {};
-                var payload:any = {};
-                console.log("Calling workspace lookup");
-                var workspaceId = await this.terraformapi.idLookup(workspacelookupurl)
-                console.log(workspaceId);
-                console.log('build relationships');
-                relationshipsworkspacedata["type"] = "workspaces";
-                relationshipsworkspacedata["id"] = workspaceId;
-                relationshipsworkspace["data"] = relationshipsworkspacedata;
-                relationships["workspace"] = relationshipsworkspace;
-                if ( runconfigversion ) {
-                    relationshipsconfigversiondata["type"] = "configuration-versions";
-                    relationshipsconfigversiondata["id"] = runconfigversion;
-                    relationshipsconfigversion["data"] = relationshipsconfigversiondata;
-                    relationships["configuration-version"] = relationshipsconfigversion;
+            case "run":
+                console.log('run');
+                switch(this.options.runcommand) {
+                    case "create":
+                        console.log('create');
+                        const runconfigversion = this.options.runconfigversion;
+                        const runisdestroy = this.options.runisdestroy;
+                        const runmessage = this.options.runmessage;
+                        var url = '/runs';
+                        var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                        var method = 'post';
+                        var attributes:any = {};
+                        var relationshipsworkspacedata:any = {};
+                        var relationshipsworkspace:any = {};
+                        var relationshipsconfigversiondata:any = {};
+                        var relationshipsconfigversion:any = {};
+                        var relationships:any = {};
+                        var payloaddata:any = {};
+                        var payload:any = {};
+                        console.log("Calling workspace lookup");
+                        var workspaceId = await this.terraformapi.idLookup(workspacelookupurl)
+                        console.log(workspaceId);
+                        relationshipsworkspacedata["type"] = "workspaces";
+                        relationshipsworkspacedata["id"] = workspaceId;
+                        relationshipsworkspace["data"] = relationshipsworkspacedata;
+                        relationships["workspace"] = relationshipsworkspace;
+                        if ( runconfigversion ) {
+                            relationshipsconfigversiondata["type"] = "configuration-versions";
+                            relationshipsconfigversiondata["id"] = runconfigversion;
+                            relationshipsconfigversion["data"] = relationshipsconfigversiondata;
+                            relationships["configuration-version"] = relationshipsconfigversion;
+                        }
+                        console.log(relationships);
+                        if ( runisdestroy === true ) {
+                            attributes["is-destroy"] = runisdestroy
+                        }
+                        if ( runmessage ) {
+                            attributes["message"] = runmessage
+                        }
+                        console.log(attributes);
+                        payloaddata["attributes"] = attributes;
+                        payloaddata["relationships"] = relationships;
+                        payloaddata["type"] = "runs";
+                        payload["data"] = payloaddata;
+                        console.log(payload);
+                        await this.terraformapi.call(url, method, JSON.stringify(payload));
+                        break;
+                    case "apply":
+                        console.log('apply');
+                        const runid = this.options.runid;
+                        const runapplycomment = this.options.runapplycomment;
+                        var url = '/runs/' + runid + '/actions/apply';
+                        var method = 'post';
+                        var payload:any = {};
+                        if ( runapplycomment ) {
+                            payload["comment"] = runapplycomment;
+                        }
+                        await this.terraformapi.call(url, method, JSON.stringify(payload));
+                        break;
+                    default:
+                         console.log("Invalid command");
+                         throw new Error("Invalid command");
+                         break;
                 }
-                console.log(relationships);
-                if ( runisdestroy === true ) {
-                    attributes["is-destroy"] = runisdestroy
-                }
-                if ( runmessage ) {
-                    attributes["message"] = runmessage
-                }
-                console.log(attributes);
-                payloaddata["attributes"] = attributes;
-                payloaddata["relationships"] = relationships;
-                payloaddata["type"] = "runs";
-                payload["data"] = payloaddata;
-                console.log(payload);
-                await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
-            case "confirmApply":
-                console.log('confirmApply');
+            case "variables":
+                console.log('variables');
                 await this.terraformapi.call("url", "get");
                 break;
             case "confirmOverride":
@@ -103,7 +125,9 @@ export class TerraformEnterpriseTask {
                 await this.terraformapi.call("url", "get");
                 break;
             default:
+                console.log("Invalid command");
                 throw new Error("Invalid command");
+                break;
         }
     }
 

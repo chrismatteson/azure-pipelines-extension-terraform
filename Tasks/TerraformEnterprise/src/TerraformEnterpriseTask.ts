@@ -19,7 +19,33 @@ export class TerraformEnterpriseTask {
     public async run() {
         console.log(this.options.command);
         switch(this.options.command) {
-            case "workspace":
+           case "lookup":
+                switch(this.options.lookupcommand) {
+                    case "workspaceId":
+                        var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                        var workspaceId = await this.terraformapi.workspaceIdLookup(workspacelookupurl)
+                        return workspaceId;
+                        break;
+                    case "latestRunId":
+                        var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                        var workspaceId = await this.terraformapi.workspaceIdLookup(workspacelookupurl)
+                        var runlookupurl = "/workspaces/" + workspaceId + "/runs?page%5Bsize%5D=1";
+                        var runId = await this.terraformapi.latestRunIdLookup(runlookupurl);
+                        console.log(runId);
+                        return runId;
+                        break;
+                    case "variableId":
+                        const variablekey = "" + this.options.variablekey;
+                        var variablelookupurl = "/vars?filter%5Borganization%5D%5Bname%5D=" + this.options.organization + "&filter%5Bworkspace%5D%5Bname%5D=" + this.options.workspace;
+                        var variableId = await this.terraformapi.variableIdLookup(variablelookupurl, variablekey);
+                        return variableId;
+                    default: 
+                        console.log("Invalid lookup command");
+                        throw new Error("Invalid lookup command");
+                        break;
+                 }
+                 break;
+           case "workspace":
                 switch(this.options.workspacecommand) {
                     case "create":
                         console.log('create');
@@ -69,7 +95,7 @@ export class TerraformEnterpriseTask {
                         var payloaddata:any = {};
                         var payload:any = {};
                         console.log("Calling workspace lookup");
-                        var workspaceId = await this.terraformapi.idLookup(workspacelookupurl)
+                        var workspaceId = await this.terraformapi.workspaceIdLookup(workspacelookupurl)
                         console.log(workspaceId);
                         relationshipsworkspacedata["type"] = "workspaces";
                         relationshipsworkspacedata["id"] = workspaceId;
@@ -114,15 +140,45 @@ export class TerraformEnterpriseTask {
                          break;
                 }
                 break;
-            case "variables":
-                console.log('variables');
-                await this.terraformapi.call("url", "get");
-                break;
-            case "confirmOverride":
-                await this.terraformapi.call("url", "get");
-                break;
-            case "destroy":
-                await this.terraformapi.call("url", "get");
+            case "variable":
+                console.log('variable');
+                switch(this.options.variablecommand) {
+                    case "create":
+                        console.log('create');
+                        var method = 'post';
+                        var url = '/vars';
+                        var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                        var workspaceId = await this.terraformapi.workspaceIdLookup(workspacelookupurl)
+                        var payload = this.variablePayload(workspaceId);
+                        break;
+                    case "update":
+                        var method = 'patch';
+                        var workspacelookupurl = "/organizations/" + this.options.organization + "/workspaces/" + this.options.workspace;
+                        var workspaceId = await this.terraformapi.workspaceIdLookup(workspacelookupurl)
+                        var variablekey = "" + this.options.variablekey;
+                        var variablelookupurl = "/vars?filter%5Borganization%5D%5Bname%5D=" + this.options.organization + "&filter%5Bworkspace%5D%5Bname%5D=" + this.options.workspace;
+                        var variableId = await this.terraformapi.variableIdLookup(variablelookupurl, variablekey);
+                        console.log(variableId);
+                        var url = '/vars/' + variableId;
+                        console.log('building payload');
+                        var payload = this.variablePayload(workspaceId, variableId);
+                        console.log('finish payload');
+                        break;
+                    case "delete":
+                        var method = 'delete';
+                        var variablekey = "" + this.options.variablekey;
+                        var variablelookupurl = "/vars?filter%5Borganization%5D%5Bname%5D=" + this.options.organization + "&filter%5Bworkspace%5D%5Bname%5D=" + this.options.workspace;
+                        var variableId = await this.terraformapi.variableIdLookup(variablelookupurl, variablekey);
+                        var url = '/vars/' + variableId;
+                        var payload = this.workspacePayload();
+                        break;
+                    default:
+                        console.log("Invalid workspace command");
+                        throw new Error("Invalid workspace command");
+                        break;
+                }
+                console.log('calling terraform api for variable');
+                await this.terraformapi.call(url, method, JSON.stringify(payload));
                 break;
             default:
                 console.log("Invalid command");
@@ -213,4 +269,42 @@ export class TerraformEnterpriseTask {
 
         return payload;
     }
+
+    private variablePayload(workspaceId: string, variableId: string = "") {
+        const variablekey = this.options.variablekey;
+        const variablevalue = this.options.variablevalue;
+        const variablecategory = this.options.variablecategory;
+        const variablehcl = this.options.variablehcl;
+        const variablesensitive = this.options.variablesensitive;
+        var payload:any = {};
+        var payloaddata:any = {};
+        var attributes:any = {};
+        var relationships:any = {};
+        var relationshipsworkspace:any = {};
+        var relationshipsworkspacedata:any = {};
+        attributes["key"] = variablekey;
+        attributes["value"] = variablevalue;
+        attributes["category"] = variablecategory;
+// this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( variablehcl === true ) {
+            attributes["hcl"] = variablehcl;
+        }
+// this.getBoolInput seems to return false for undefined, so we are setting this to only run if the non-default value is set.
+        if ( variablesensitive === true ) {
+            attributes["sensitive"] = variablesensitive;
+        }
+        relationshipsworkspacedata["type"] = 'workspaces';
+        relationshipsworkspacedata["id"] = workspaceId;
+        relationshipsworkspace["data"] = relationshipsworkspacedata;
+        relationships["workspace"] = relationshipsworkspace;
+        payloaddata["type"] = "vars";
+        if ( variableId != "" ) {
+            payloaddata["id"] = variableId;
+        }
+        payloaddata["attributes"] = attributes;
+        payloaddata["relationships"] = relationships;
+        payload["data"] = payloaddata;
+
+        return payload;
+   }
 }

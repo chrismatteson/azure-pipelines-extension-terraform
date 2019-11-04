@@ -67,7 +67,7 @@
             "type": "string",
             "label": "Name of Workspace",
             "required": true,
-            "helpMarkDown": "Name of Workspace."
+            "helpMarkDown": "Name of Workspace.",
             "visibleRule": "command = lookup || command = workspace || command = run && runCommand = create"
         },
         {
@@ -193,7 +193,7 @@
             "required": true,
             "visibleRule": "workspacevcsrepo = true",
             "helpMarkDown": "Identifier of VCS repo."
-        },
+        }
     ],
     "execution": {
         "Node": {

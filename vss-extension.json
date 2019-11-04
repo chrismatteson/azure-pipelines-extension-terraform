@@ -36,6 +36,16 @@
             }
         },
         {
+            "id": "506f3bf4-69c9-4812-a879-ccfc035f174c",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "Tasks/TerraformEnterprise"
+            }
+        },
+        {
             "id": "653507a3-d921-47dc-8fed-c5649d8e9e0e",
             "type": "ms.vss-distributed-task.task",
             "targets": [

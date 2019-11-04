@@ -52,6 +52,9 @@ export class TaskOptions {
     readonly variablehcl : boolean | undefined;
     readonly variablesensitive : boolean | undefined;
 
+    // Policy Checks
+    readonly policycheckid : string | undefined;
+
     /**
      * Creates and loads a well-formed options object
      */

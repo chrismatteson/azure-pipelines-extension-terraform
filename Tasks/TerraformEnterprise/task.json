@@ -26,14 +26,10 @@
             "required": true,
             "helpMarkDown": "Select the Terraform API command to call",
             "options": {
-                "workspace": "Manage Workspace",
-                "queuePlan": "Queue Plan",
-                "confirmApply": "Confirm & Apply",
-                "discardRun": "Discard Run",
-                "addComment": "Add Comment",
-                "cancelRun": "Cancel Run",
-                "overrideContinue": "Override & Continue",
-                "checkRun": "Check Run Status"
+                "lookup": "Lookup Ids",
+                "workspace": "Workspace",
+                "run": "Run",
+                "variable": "Variable"
             }
         },
         {
@@ -45,6 +41,13 @@
             "helpMarkDown": "Url of Terraform Cloud or Terraform Enterprise. Defaults to https://app.terraform.io/api/v2/."
         },
         {
+            "name": "organization",
+            "type": "string",
+            "label": "Terraform Organization",
+            "required": true,
+            "helpMarkDown": "Organization for command to be run against."
+        },
+        {
             "name": "token",
             "type": "string",
             "label": "Terraform API Token",
@@ -52,25 +55,144 @@
             "helpMarkDown": "Token to authenticate to Terraform API."
         },
         {
-            "name": "workspaceName",
+            "name": "skipcertcheck",
+            "type": "boolean",
+            "label": "Skip Certificate Validation",
+            "required": true,
+            "defaultValue": true,
+            "helpMarkDown": "Toggle if Terraform API certificate validation should be enabled.."
+        },
+        {
+            "name": "workspace",
             "type": "string",
             "label": "Name of Workspace",
             "required": true,
-            "helpMarkDown": "Name of Workspace.",
-            "visibleRule": "command = workspace"
+            "helpMarkDown": "Name of Workspace."
+            "visibleRule": "command = lookup || command = workspace || command = run && runCommand = create"
         },
         {
-            "name": "action",
+            "name": "lookupCommand",
+            "type": "pickList",
+            "label": "Action",
+            "required": true,
+            "helpMarkDown": "Action to take.",
+            "visibleRule": "command = lookup",
+            "options": {
+               "workspaceId": "Workspace Id",
+               "latestRunId": "Latest Run Id",
+               "variableId": "Variable Id"
+            }
+        },
+        {
+            "name": "workspaceCommand",
             "type": "pickList",
             "label": "Action",
             "required": true,
             "helpMarkDown": "Action to take.",
             "visibleRule": "command = workspace",
             "options": {
-               "create": "Create",
-               "update": "Update",
-               "delete": "Delete"
+               "create": "Create Workspace",
+               "update": "Update Workspace",
+               "delete": "Delete Workspace"
             }
+        },
+        {
+            "name": "workspaceautoapply",
+            "type": "boolean",
+            "label": "Auto Apply",
+            "defaultValue": false,
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Toggle if a run should automatically trigger an Apply."
+        },
+        {
+            "name": "workspacedescription",
+            "type": "string",
+            "label": "Description",
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Optional description for workspace."
+        },
+        {
+            "name": "workspacefiletriggeresenabled",
+            "type": "boolean",
+            "label": "File Triggers Enabled",
+            "defaultValue": false,
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Toggle if File Triggeres should be enabled."
+        },
+        {
+            "name": "workspacequeueallruns",
+            "type": "boolean",
+            "label": "Queue All Runs",
+            "defaultValue": false,
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Toggle if all runs should be queued."
+        },
+        {
+            "name": "workspacespeculativeenabled",
+            "type": "boolean",
+            "label": "Speculative Enabled",
+            "defaultValue": true,
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Toggle if speculative runs should be disabled."
+        },
+        {
+            "name": "workspaceterraformversion",
+            "type": "string",
+            "label": "Terraform Version",
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Optional version of Terraform to use, default is latest when workspace is created."
+        },
+        {
+            "name": "workspacetriggerprefixes",
+            "type": "string",
+            "label": "Trigger Prefixes",
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Optional array of prefixes for Run triggers."
+        },
+        {
+            "name": "workspaceworkingdirectory",
+            "type": "string",
+            "label": "Working Directory",
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Directory relative to repository root to execute Terraform commands."
+        },
+        {
+            "name": "workspacevcsrepo",
+            "type": "boolean",
+            "label": "Use VCS Repo",
+            "defaultValue": false,
+            "visibleRule": "workspaceCommand = create || workspaceCommand = update",
+            "helpMarkDown": "Boolean to allow configuration of VCS repo for workspace."
+        },
+        {
+            "name": "vcsrepooauthtokenid",
+            "type": "string",
+            "label": "Oauth Token Id",
+            "visibleRule": "workspacevcsrepo = true",
+            "helpMarkDown": "Optional Oauth Token Id to reach VCS repo."
+        },
+        {
+            "name": "vcsrepobranch",
+            "type": "string",
+            "label": "Branch",
+            "visibleRule": "workspacevcsrepo = true",
+            "helpMarkDown": "Optional Branch to use of VCS repo. Will default to master."
+        },
+        {
+            "name": "vcsrepoingesssubmodules",
+            "type": "boolean",
+            "label": "Ingess Submodules",
+            "defaultValue": false,
+            "visibleRule": "workspacevcsrepo = true",
+            "helpMarkDown": "Toggle if Terraform should ingess submodules in addtion to the root module."
+        },
+        {
+            "name": "vcsrepoidentifier",
+            "type": "string",
+            "label": "Identifier",
+            "required": true,
+            "visibleRule": "workspacevcsrepo = true",
+            "helpMarkDown": "Identifier of VCS repo."
         },
     ],
     "execution": {

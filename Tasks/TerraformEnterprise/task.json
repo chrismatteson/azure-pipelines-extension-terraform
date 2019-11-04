@@ -63,14 +63,6 @@
             "helpMarkDown": "Toggle if Terraform API certificate validation should be enabled.."
         },
         {
-            "name": "workspace",
-            "type": "string",
-            "label": "Name of Workspace",
-            "required": true,
-            "helpMarkDown": "Name of Workspace.",
-            "visibleRule": "command = lookup || command = workspace || runCommand = create"
-        },
-        {
             "name": "lookupCommand",
             "type": "pickList",
             "label": "Action",
@@ -205,6 +197,14 @@
                "create": "Create Run",
                "apply": "Apply Run"
             }
+        },
+        {
+            "name": "workspace",
+            "type": "string",
+            "label": "Name of Workspace",
+            "required": true,
+            "helpMarkDown": "Name of Workspace.",
+            "visibleRule": "command = lookup || command = workspace || runCommand = create"
         },
         {
             "name": "runisdestroy",

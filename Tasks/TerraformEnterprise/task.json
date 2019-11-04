@@ -193,6 +193,55 @@
             "required": true,
             "visibleRule": "workspacevcsrepo = true",
             "helpMarkDown": "Identifier of VCS repo."
+        },
+        {
+            "name": "runCommand",
+            "type": "pickList",
+            "label": "Action",
+            "required": true,
+            "helpMarkDown": "Action to take.",
+            "visibleRule": "command = workspace",
+            "options": {
+               "create": "Create Run",
+               "apply": "Apply Run"
+            }
+        },
+        {
+            "name": "runisdestroy",
+            "type": "boolean",
+            "label": "Is Destroy",
+            "defaultValue": false,
+            "visibleRule": "command = run",
+            "helpMarkDown": "Toggle if Destroy plan should be generated."
+        },
+        {
+            "name": "runmessage",
+            "type": "string",
+            "label": "Message",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Message to attach to run."
+        },
+        {
+            "name": "runconfiguversion",
+            "type": "string",
+            "label": "Configuration Version",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Configuration Version for run."
+        },
+        {
+            "name": "runid",
+            "type": "string",
+            "label": "Run Id",
+            "required": "true",
+            "visibleRule": "runCommand = apply",
+            "helpMarkDown": "Run Id to be applied."
+        },
+        {
+            "name": "runapplycomment",
+            "type": "string",
+            "label": "Apply Comment",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Comment to attach to apply."
         }
     ],
     "execution": {

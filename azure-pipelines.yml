@@ -3,6 +3,7 @@ trigger:
   branches:
     include:
     - master
+    - tfe
   paths:
     exclude:
     - tests/*

@@ -18,6 +18,9 @@
             "path": "Tasks/TerraformInstaller"
         },
         {
+            "path": "Tasks/TerraformEnterprise"
+        },
+        {
             "path": "Tasks/Terraform"
         }
     ],

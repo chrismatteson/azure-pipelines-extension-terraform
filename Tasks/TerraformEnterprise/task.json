@@ -65,7 +65,7 @@
         {
             "name": "lookupCommand",
             "type": "pickList",
-            "label": "Action",
+            "label": "Lookup Command",
             "required": true,
             "helpMarkDown": "Action to take.",
             "visibleRule": "command = lookup",
@@ -78,7 +78,7 @@
         {
             "name": "workspaceCommand",
             "type": "pickList",
-            "label": "Action",
+            "label": "Workspace Command",
             "required": true,
             "helpMarkDown": "Action to take.",
             "visibleRule": "command = workspace",
@@ -189,10 +189,10 @@
         {
             "name": "runCommand",
             "type": "pickList",
-            "label": "Action",
+            "label": "Run Command",
             "required": true,
             "helpMarkDown": "Action to take.",
-            "visibleRule": "command = workspace",
+            "visibleRule": "command = run",
             "options": {
                "create": "Create Run",
                "apply": "Apply Run"

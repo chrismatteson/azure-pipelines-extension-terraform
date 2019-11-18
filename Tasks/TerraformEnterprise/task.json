@@ -244,7 +244,7 @@
             "helpMarkDown": "Comment to attach to apply."
         },
         {
-            "name": :variableCommand",
+            "name": "variableCommand",
             "type": "pickList",
             "label": "Variable Command",
             "required": true,

@@ -278,7 +278,7 @@
             "label": "Variable Key",
             "required": "true",
             "visibleRule": "variableCommand = create || variableCommand = update",
-            "helpMarkDown": "Key of Variable."
+            "helpMarkDown": "Key of Variable.",
             "options": {
                "terraform": "Terraform Variable",
                "environment": "Environment Variable"

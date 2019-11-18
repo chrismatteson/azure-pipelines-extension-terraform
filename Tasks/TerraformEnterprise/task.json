@@ -242,6 +242,65 @@
             "label": "Apply Comment",
             "visibleRule": "command = run",
             "helpMarkDown": "Comment to attach to apply."
+        },
+        {
+            "name": :variableCommand",
+            "type": "pickList",
+            "label": "Variable Command",
+            "required": true,
+            "helpMarkDown": "Action to take.",
+            "visibleRule": "command = variable",
+            "options": {
+               "add": "Add Variable",
+               "update": "Update Variable",
+               "delete": "Delete Variable"
+            }
+        },
+        {
+            "name": "variablekey",
+            "type": "string",
+            "label": "Variable Key",
+            "required": "true",
+            "visibleRule": "command = variable",
+            "helpMarkDown": "Key of Variable."
+        },
+        {
+            "name": "variablevalue",
+            "type": "string",
+            "label": "Variable Value",
+            "required": "true",
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Value of Variable."
+        },
+        {
+            "name": "variablecategory",
+            "type": "picklist",
+            "label": "Variable Key",
+            "required": "true",
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Key of Variable."
+            "options": {
+               "terraform": "Terraform Variable",
+               "environment": "Environment Variable"
+            }
+        },
+        {
+            "name": "variablehcl",
+            "type": "boolean",
+            "label": "Value is HCL",
+            "required": "true",
+            "defaultValue": false,
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Toggle if variable value should be read as HCL."
+        },
+        {
+            "name": "variablesensitive",
+            "type": "string",
+            "label": "Variable Sensitive",
+            "required": "true",
+            "defaultValue": false,
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Toggle if variable value is sensative and should be write only."
         }
     ],
     "execution": {

@@ -63,17 +63,9 @@
             "helpMarkDown": "Toggle if Terraform API certificate validation should be enabled.."
         },
         {
-            "name": "workspace",
-            "type": "string",
-            "label": "Name of Workspace",
-            "required": true,
-            "helpMarkDown": "Name of Workspace."
-            "visibleRule": "command = lookup || command = workspace || command = run && runCommand = create"
-        },
-        {
             "name": "lookupCommand",
             "type": "pickList",
-            "label": "Action",
+            "label": "Lookup Command",
             "required": true,
             "helpMarkDown": "Action to take.",
             "visibleRule": "command = lookup",
@@ -86,7 +78,7 @@
         {
             "name": "workspaceCommand",
             "type": "pickList",
-            "label": "Action",
+            "label": "Workspace Command",
             "required": true,
             "helpMarkDown": "Action to take.",
             "visibleRule": "command = workspace",
@@ -194,6 +186,122 @@
             "visibleRule": "workspacevcsrepo = true",
             "helpMarkDown": "Identifier of VCS repo."
         },
+        {
+            "name": "runCommand",
+            "type": "pickList",
+            "label": "Run Command",
+            "required": true,
+            "helpMarkDown": "Action to take.",
+            "visibleRule": "command = run",
+            "options": {
+               "create": "Create Run",
+               "apply": "Apply Run"
+            }
+        },
+        {
+            "name": "workspace",
+            "type": "string",
+            "label": "Name of Workspace",
+            "required": true,
+            "helpMarkDown": "Name of Workspace.",
+            "visibleRule": "command = lookup || command = workspace || runCommand = create"
+        },
+        {
+            "name": "runisdestroy",
+            "type": "boolean",
+            "label": "Is Destroy",
+            "defaultValue": false,
+            "visibleRule": "command = run",
+            "helpMarkDown": "Toggle if Destroy plan should be generated."
+        },
+        {
+            "name": "runmessage",
+            "type": "string",
+            "label": "Message",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Message to attach to run."
+        },
+        {
+            "name": "runconfiguversion",
+            "type": "string",
+            "label": "Configuration Version",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Configuration Version for run."
+        },
+        {
+            "name": "runid",
+            "type": "string",
+            "label": "Run Id",
+            "required": "true",
+            "visibleRule": "runCommand = apply",
+            "helpMarkDown": "Run Id to be applied."
+        },
+        {
+            "name": "runapplycomment",
+            "type": "string",
+            "label": "Apply Comment",
+            "visibleRule": "command = run",
+            "helpMarkDown": "Comment to attach to apply."
+        },
+        {
+            "name": :variableCommand",
+            "type": "pickList",
+            "label": "Variable Command",
+            "required": true,
+            "helpMarkDown": "Action to take.",
+            "visibleRule": "command = variable",
+            "options": {
+               "add": "Add Variable",
+               "update": "Update Variable",
+               "delete": "Delete Variable"
+            }
+        },
+        {
+            "name": "variablekey",
+            "type": "string",
+            "label": "Variable Key",
+            "required": "true",
+            "visibleRule": "command = variable",
+            "helpMarkDown": "Key of Variable."
+        },
+        {
+            "name": "variablevalue",
+            "type": "string",
+            "label": "Variable Value",
+            "required": "true",
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Value of Variable."
+        },
+        {
+            "name": "variablecategory",
+            "type": "picklist",
+            "label": "Variable Key",
+            "required": "true",
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Key of Variable."
+            "options": {
+               "terraform": "Terraform Variable",
+               "environment": "Environment Variable"
+            }
+        },
+        {
+            "name": "variablehcl",
+            "type": "boolean",
+            "label": "Value is HCL",
+            "required": "true",
+            "defaultValue": false,
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Toggle if variable value should be read as HCL."
+        },
+        {
+            "name": "variablesensitive",
+            "type": "string",
+            "label": "Variable Sensitive",
+            "required": "true",
+            "defaultValue": false,
+            "visibleRule": "variableCommand = create || variableCommand = update",
+            "helpMarkDown": "Toggle if variable value is sensative and should be write only."
+        }
     ],
     "execution": {
         "Node": {
